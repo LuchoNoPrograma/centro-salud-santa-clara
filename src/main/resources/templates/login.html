@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Centro de Salud Santa Clara</title>
+</head>
+<body>
+<h3>Iniciar sesión</h3>
+<form th:action="@{/login}" method="post">
+    <div>
+        <label for="idAdministrador">Id Administrador:</label>
+        <input type="text" id="idAdministrador" name="idAdministrador">
+    </div>
+    <div>
+        <label for="codigoAcceso">Codigo de acceso:</label>
+        <input type="password" id="codigoAcceso" name="codigoAcceso">
+
+        <button>Iniciar sesión</button>
+    </div>
+    <div>
+</body>
+</html>
