@@ -23,7 +23,7 @@
                 </ol>
             </div>
             <div class="row">
-                <div class="me-auto d-lg-block">
+                <div class="d-flex mb-3 justify-content-end">
                     <a href="javascript:void(0);" class="btn btn-primary btn-rounded" data-bs-toggle="modal"
                        data-bs-target="#modal-form-cita">+ Agendar nueva cita</a>
                 </div>
@@ -102,34 +102,46 @@
                         <div class="col-xl-6">
                             <div class="mb-3">
                                 <label for="fecha" class="form-label">Fecha</label>
-                                <input type="date" class="form-control" id="fecha" placeholder="Seleccione la fecha" th:field="*{fecha}">
+                                <input type="date" class="form-control" id="fecha" placeholder="Seleccione la fecha"
+                                       th:field="*{fecha}">
                             </div>
                         </div>
                         <div class="col-xl-6">
                             <div class="mb-3">
                                 <label for="hora" class="form-label">Hora</label>
-                                <input type="time" class="form-control" id="hora" placeholder="Selecciona la hora" th:field="*{hora}">
+                                <input type="time" class="form-control" id="hora" placeholder="Selecciona la hora"
+                                       th:field="*{hora}">
                             </div>
                         </div>
-                        <div class="col-lg-6">
+                        <div class="col-lg-12">
                             <label class="form-label">Persona que solicita cita:</label>
                             <select class="default-select wide w-100" aria-label="Default" id="paciente"
+                                    data-live-search="true" title="--SELECCIONE--"
                                     th:field="*{pacientePersonaIdPersona}">
                                 <option th:each="persona : ${listaPersonas}"
                                         th:value="${persona.idPersona}" th:text="${persona.nombreCompleto}"
                                         th:field="*{pacientePersonaIdPersona}"
                                 ></option>
-                                <option value="null" hidden="hidden" th:selected="*{pacientePersonaIdPersona == null}">--SELECCIONE--</option>
+                                <option value="null" hidden="hidden" th:selected="*{pacientePersonaIdPersona == null}">
+                                    --SELECCIONE--
+                                </option>
                             </select>
                         </div>
-                        <div class="col-lg-6">
+                        <div class="col-lg-6 mt-3">
+                            <label class="form-label">Seleccione la especialidad</label>
+                            <select class="default-select wide w-100" aria-label="Default" id="especialidad"
+                                    data-live-search="true" title="--SELECCIONE--"
+                                    th:field="*{especialidad}">
+                                <option th:each="especialidad : ${listaEspecialidades}"
+                                        th:value="${especialidad.name()}" th:text="${especialidad.nombre}"
+                                ></option>
+                            </select>
+                        </div>
+                        <div class="col-lg-6 mt-3">
                             <label class="form-label">Médico que atendera cita:</label>
                             <select class="default-select wide w-100" aria-label="Default" id="medico"
+                                    data-live-search="true" title="--SELECCIONE--"
                                     th:field="*{medicoPersonaIdPersona}">
-                                <option th:each="medico : ${listaMedicos}"
-                                        th:value="${medico.idMedico}" th:text="${medico.persona.nombreCompleto}"
-                                ></option>
-                                <option value="null" hidden="hidden" th:selected="*{medicoPersonaIdPersona == null}">--SELECCIONE--</option>
                             </select>
                         </div>
                     </div>
@@ -147,30 +159,52 @@
 <th:block th:replace="~{fragments/style-script :: style-script-footer(~{},~{::script})}">
     <script th:src="@{/vendor/datatables/js/jquery.dataTables.min.js}"></script>
     <script>
-        const table = $('#tabla-citas').DataTable({
-            searching: false,
-            paging: true,
-            select: false,
-            info: true,
-            lengthChange: false
-        });
-        $('#tabla-citas tbody').on('click', 'tr', function () {
-            const data = table.row(this).data();
-        });
+        $(document).ready(function () {
+            const table = $('#tabla-citas').DataTable({
+                searching: false,
+                paging: true,
+                select: false,
+                info: true,
+                lengthChange: false
+            });
+            $('#tabla-citas tbody').on('click', 'tr', function () {
+                const data = table.row(this).data();
+            });
 
-        $fecha = $('#fecha');
-        $hora = $('#hora');
-        $medico = $('#medico');
-        $paciente= $('#paciente');
-        if ($fecha.val() === '') {
-            $fecha.val(new Date().toISOString().split('T')[0]);
-        }
+            $fecha = $('#fecha');
+            $hora = $('#hora');
+            $medico = $('#medico');
+            $especialidad = $('#especialidad');
+            $paciente = $('#paciente');
+            if ($fecha.val() === '') {
+                $fecha.val(new Date().toISOString().split('T')[0]);
+            }
 
-        if ($hora.val() === '') {
-            const horaMinuto = new Date().toTimeString().split(' ')[0].substring(0, 5);
-            console.log(horaMinuto);
-            $hora.val(horaMinuto);
-        }
+            if ($hora.val() === '') {
+                const horaMinuto = new Date().toTimeString().split(' ')[0].substring(0, 5);
+                console.log(horaMinuto);
+                $hora.val(horaMinuto);
+            }
+
+            $especialidad.on('changed.bs.select', async () => {
+                const response = await fetch('/citas/medico/especialidad/' + $especialidad.val())
+                const data = await response.json();
+
+                $medico.empty();
+                if(data.length === 0){
+                    $medico.append('<option value="null" disabled>NO HAY MEDICOS CON ESTA ESPECIALIDAD</option>')
+                    $medico.selectpicker('refresh');
+                    return
+                }
+
+                $medico.append('<option value="null" disabled selected>--SELECCIONE--</option>');
+                data.forEach(medico => {
+                    $medico.append('<option value="' + medico.idMedico + '">' + medico.personaNombreCompleto + '</option>');
+                });
+                $medico.selectpicker('refresh');
+            })
+        })
+
     </script>
 </th:block>
 </body>

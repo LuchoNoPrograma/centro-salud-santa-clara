@@ -6,12 +6,12 @@ import com.uap.centrosaludsantaclara.citas.entidad.Cita;
 import com.uap.centrosaludsantaclara.citas.entidad.Medico;
 import com.uap.centrosaludsantaclara.citas.entidad.Paciente;
 import com.uap.centrosaludsantaclara.citas.entidad.Secretaria;
+import com.uap.centrosaludsantaclara.citas.enums.Especialidad;
 import com.uap.centrosaludsantaclara.citas.repositorio.ICitaRepositorio;
 import com.uap.centrosaludsantaclara.citas.repositorio.IMedicoRepositorio;
 import com.uap.centrosaludsantaclara.citas.repositorio.IPacienteRepositorio;
 import com.uap.centrosaludsantaclara.citas.repositorio.ISecretariaRepositorio;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -83,8 +83,8 @@ public class CitasCasoUso {
         return personaRepositorio.findAllOrderByNombres();
     }
 
-    public List<Medico> verMedicosDisponibles(){
-        return medicoRepositorio.findAllOrderByNombres();
+    public List<Medico> verMedicosDisponiblesPorEspecialidad(Especialidad especialidad){
+        return medicoRepositorio.findAllByEspecialidadOrderByNombres(especialidad);
     }
 
     public Cita cancelarCitaCasoUso(Long idCita){

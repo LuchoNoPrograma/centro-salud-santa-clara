@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Getter
 public enum Especialidad {
+    MEDICINA_GENERAL("Medicina general"),
     CARDIOLOGIA("Cardiología"),
     DERMATOLOGIA("Dermatología"),
     ENDOCRINOLOGIA("Endocrinología"),
