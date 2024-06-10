@@ -41,4 +41,19 @@ public class Persona {
 
     @Transient
     private String codigoAcceso;
+
+    @Transient
+    private String nombreCompleto;
+
+    public String getNombreCompleto() {
+        if (materno == null) {
+            return nombres + " " + paterno;
+        }
+
+        if (paterno == null) {
+            return nombres + " " + materno;
+        }
+
+        return nombres + " " + paterno + " " + materno;
+    }
 }

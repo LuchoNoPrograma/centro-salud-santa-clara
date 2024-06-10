@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="es">
+<head th:replace="~{/fragments/head :: head(~{::title}, ~{::link})}">
+    <title>Iniciar sesión - Hospital Santa Clara</title>
+    <link th:href="@{/vendor/datatables/css/jquery.dataTables.min.css}" rel="stylesheet">
+</head>
+<body>
+<div th:if="${exito}" class="alert alert-primary alert-dismissible alert-alt solid fade show">
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="btn-close">
+    </button>
+    <strong>Operación realizada con exito!</strong> <span th:text="${exito}"></span>
+</div>
+<div id="main-wrapper">
+    <th:block th:replace="~{fragments/header :: header}"></th:block>
+    <th:block th:replace="~{fragments/sidebar :: sidebar}"></th:block>
+
+    <div class="content-body">
+        <div class="container-fluid">
+            <div class="page-titles">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="javascript:void(0)">Inicio</a></li>
+                    <li class="breadcrumb-item"><a href="javascript:void(0)">Ver citas</a></li>
+                </ol>
+            </div>
+            <div class="row">
+                <div class="me-auto d-lg-block">
+                    <a href="javascript:void(0);" class="btn btn-primary btn-rounded" data-bs-toggle="modal"
+                       data-bs-target="#modal-form-cita">+ Agendar nueva cita</a>
+                </div>
+                <div class="col-xl-12">
+                    <div class="table-responsive">
+                        <table id="tabla-citas"
+                               class="table shadow-hover doctor-list table-bordered mb-4 dataTablesCard fs-14">
+                            <thead>
+                            <tr>
+                                <th>Fecha/Hora</th>
+                                <th>Paciente</th>
+                                <th>Medico</th>
+                                <th>Especialidad</th>
+                                <th>Estado</th>
+                                <th>Operaciones</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="cita : ${listaCitas}">
+                                <td>
+                                    <span th:text="${#temporals.format(cita.fecha, 'dd/MM/yyyy')}"></span>
+                                    -
+                                    <span th:text="${#temporals.format(cita.hora, 'HH:mm')}"></span>
+                                </td>
+                                <td th:text="${cita.paciente.persona.nombreCompleto}"></td>
+                                <td th:text="${cita.medico.persona.nombreCompleto}"></td>
+                                <td th:text="${cita.medico.especialidad.name()}"></td>
+                                <td>
+                                    <a th:text="${cita.estado}"
+                                       href="javascript:void(0);"
+                                       class="btn btn-primary light btn-rounded btn-sm text-nowrap"></a>
+                                </td>
+                                <td th:text="${cita.idCita}">
+                                    <div class="dropdown ms-auto c-pointer text-end">
+                                        <div class="btn-link" data-bs-toggle="dropdown">
+                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                                 xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M12 11C11.4477 11 11 11.4477 11 12C11 12.5523 11.4477 13 12 13C12.5523 13 13 12.5523 13 12C13 11.4477 12.5523 11 12 11Z"
+                                                      stroke="#3E4954" stroke-width="2" stroke-linecap="round"
+                                                      stroke-linejoin="round"/>
+                                                <path d="M12 18C11.4477 18 11 18.4477 11 19C11 19.5523 11.4477 20 12 20C12.5523 20 13 19.5523 13 19C13 18.4477 12.5523 18 12 18Z"
+                                                      stroke="#3E4954" stroke-width="2" stroke-linecap="round"
+                                                      stroke-linejoin="round"/>
+                                                <path d="M12 4C11.4477 4 11 4.44772 11 5C11 5.55228 11.4477 6 12 6C12.5523 6 13 5.55228 13 5C13 4.44772 12.5523 4 12 4Z"
+                                                      stroke="#3E4954" stroke-width="2" stroke-linecap="round"
+                                                      stroke-linejoin="round"/>
+                                            </svg>
+                                        </div>
+                                        <div class="dropdown-menu dropdown-menu-right">
+                                            <a class="dropdown-item" href="javascript:void(0);">Ver detalles</a>
+                                            <a class="dropdown-item" href="javascript:void(0);">Editar</a>
+                                            <a class="dropdown-item" href="javascript:void(0);">Eliminar</a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modal-form-cita" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <form th:action="@{/citas/agendar-cita}" method="POST" id="form-agendar-cita" th:object="${agendarCitaDto}">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Agendar nueva cita</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-xl-6">
+                            <div class="mb-3">
+                                <label for="fecha" class="form-label">Fecha</label>
+                                <input type="date" class="form-control" id="fecha" placeholder="Seleccione la fecha" th:field="*{fecha}">
+                            </div>
+                        </div>
+                        <div class="col-xl-6">
+                            <div class="mb-3">
+                                <label for="hora" class="form-label">Hora</label>
+                                <input type="time" class="form-control" id="hora" placeholder="Selecciona la hora" th:field="*{hora}">
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <label class="form-label">Persona que solicita cita:</label>
+                            <select class="default-select wide w-100" aria-label="Default" id="paciente"
+                                    th:field="*{pacientePersonaIdPersona}">
+                                <option th:each="persona : ${listaPersonas}"
+                                        th:value="${persona.idPersona}" th:text="${persona.nombreCompleto}"
+                                        th:field="*{pacientePersonaIdPersona}"
+                                ></option>
+                                <option value="null" hidden="hidden" th:selected="*{pacientePersonaIdPersona == null}">--SELECCIONE--</option>
+                            </select>
+                        </div>
+                        <div class="col-lg-6">
+                            <label class="form-label">Médico que atendera cita:</label>
+                            <select class="default-select wide w-100" aria-label="Default" id="medico"
+                                    th:field="*{medicoPersonaIdPersona}">
+                                <option th:each="medico : ${listaMedicos}"
+                                        th:value="${medico.idMedico}" th:text="${medico.persona.nombreCompleto}"
+                                ></option>
+                                <option value="null" hidden="hidden" th:selected="*{medicoPersonaIdPersona == null}">--SELECCIONE--</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Agendar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<th:block th:replace="~{fragments/style-script :: style-script-footer(~{},~{::script})}">
+    <script th:src="@{/vendor/datatables/js/jquery.dataTables.min.js}"></script>
+    <script>
+        const table = $('#tabla-citas').DataTable({
+            searching: false,
+            paging: true,
+            select: false,
+            info: true,
+            lengthChange: false
+        });
+        $('#tabla-citas tbody').on('click', 'tr', function () {
+            const data = table.row(this).data();
+        });
+
+        $fecha = $('#fecha');
+        $hora = $('#hora');
+        $medico = $('#medico');
+        $paciente= $('#paciente');
+        if ($fecha.val() === '') {
+            $fecha.val(new Date().toISOString().split('T')[0]);
+        }
+
+        if ($hora.val() === '') {
+            const horaMinuto = new Date().toTimeString().split(' ')[0].substring(0, 5);
+            console.log(horaMinuto);
+            $hora.val(horaMinuto);
+        }
+    </script>
+</th:block>
+</body>
+</html>

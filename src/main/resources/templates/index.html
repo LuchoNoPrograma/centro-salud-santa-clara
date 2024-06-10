@@ -1,10 +1,44 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Centro de salud Santa Clara</title>
+<html lang="es">
+<head th:replace="~{/fragments/head :: head(~{::title}, ~{::link})}">
+    <title>Iniciar sesión - Hospital Santa Clara</title>
+    <link th:href="@{vendor/datatables/css/jquery.dataTables.min.css}" rel="stylesheet">
 </head>
 <body>
-Hola papus
+<div id="main-wrapper">
+    <th:block th:replace="~{fragments/header :: header}"></th:block>
+    <th:block th:replace="~{fragments/sidebar :: sidebar}"></th:block>
+
+    <div class="content-body">
+        <div class="container-fluid">
+            <div class="page-titles">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="javascript:void(0)">Dashboard</a></li>
+                    <li class="breadcrumb-item  active"><a href="javascript:void(0)">Doctor List</a></li>
+                </ol>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+
+
+<th:block th:replace="~{fragments/style-script :: style-script-footer(~{},~{::script})}">
+    <script th:src="@{/vendor/datatables/js/jquery.dataTables.min.js}"></script>
+    <script>
+        const table = $('#example5').DataTable({
+            searching: false,
+            paging: true,
+            select: false,
+            info: true,
+            lengthChange: false
+
+        });
+        $('#example tbody').on('click', 'tr', function () {
+            const data = table.row(this).data();
+        });
+    </script>
+</th:block>
 </body>
 </html>

@@ -38,7 +38,7 @@ public class SecurityConfig {
         return httpSecurity
                 .authenticationProvider(daoAuthenticationProvider())
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/css/**", "/js/**", "/img/**", "/login").permitAll()
+                        .requestMatchers("/css/**", "/icons/**", "/images/**", "/js/**", "/vendor/**", "/login").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(formLogin -> formLogin
@@ -46,10 +46,10 @@ public class SecurityConfig {
                         .usernameParameter("idAdministrador")
                         .passwordParameter("codigoAcceso")
                         .failureUrl("/login?loginFailed=true")
+                        .defaultSuccessUrl("/", true)
                 )
                 .logout(logout -> logout
                         .logoutSuccessUrl("/login?logoutSuccess=true")
-                        .deleteCookies("JSESSIONID")
                 )
                 .build();
     }
